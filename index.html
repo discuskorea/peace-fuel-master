@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PEACE-FUEL 마스터 (6반)</title>
+    <title>PEACE-FUEL 마스터</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
@@ -37,11 +37,11 @@
             text-align: center;
             border-bottom-left-radius: 25px;
             border-bottom-right-radius: 25px;
-       .header h1 {
+        }
+        .header h1 {
             margin-top: 5px; 
             margin-bottom: 15px;
             font-size: 1.8em;
-        }     
         }
         .class-badge {
             background: rgba(255,255,255,0.2);
@@ -211,7 +211,6 @@
 <div class="app-container">
     <div class="header">
         <h1>PEACE-FUEL 마스터</h1>
-        <!-- 👇 여기 뱃지가 6반으로 변경되었습니다 -->
         <div class="class-badge" id="classNameDisplay">🏫 6반</div>
         <br>
         <select class="name-select" id="studentSelect">
@@ -309,19 +308,13 @@
 </div>
 
 <script>
-    // 기존 7반과 동일한 GAS(구글 시트) 주소를 사용합니다.
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxblUMdkTo3RmRfVmB6HrmlH8LDDpEuC0Dfh_jNg2-L5B6JErLMHcG2NROy87I18q7-/exec";
 
-    // 👇 이 두 곳을 6반에 맞게 세팅해 두었습니다. 명단만 실제 6반 학생들로 변경해 주세요!
     const CLASS_NAME = "6반"; 
     const STUDENT_LIST = [
-         "1번 김가온", "2번 김도겸", "3번 김도훈", "4번 김동휘", "5번 김리아",
-         "6번 김민규", "7번 김민조", "8번 김수아", "9번 김시온", "10번 김윤상",
-         "11번 문수영", "12번 박라임", "13번 박시환", "14번 박진수", "15번 변준서",
-         "16번 신희예", "17번 양서준", "18번 엄준수", "19번 이다인", "20번 이세빈",
-         "21번 이은솔", "22번 이지안", "23번 정지호", "24번 정현우", "25번 최서진",
-         "26번 최준형", "27번 최희수", "28번 허재준", "29번 관리자", "30번 관리자",
-         "31번 관리자", "32번 관리자" // 👈 이름과 이름 사이의 쉼표(,)를 꼭 확인하세요!
+         "1번 권민찬", "2번 김동하", "3번 김동현", "4번 김태율", "5번 김해인", "6번 김현서", "7번 남연서", "8번 박기준", "9번 박민혁", "10번 박지민", 
+         "11번 박지온", "12번 손준영", "13번 송민재", "14번 심지혜", "15번 이윤찬", "16번 이주연", "17번 이지안", "18번 이하준", "19번 임지원", "20번 장원준",
+         "21번 전예찬", "22번 전윤우", "23번 전현우", "24번 최지우", "25번 최현채", "26번 추지호", "27번 하예린", "28번 황재민", "29번 관리자", "30번 관리자", "31번 관리자", "32번 관리자"
     ];
 
     let isHistoryExpanded = false;
@@ -348,8 +341,6 @@
             select.appendChild(option);
         });
 
-        // 💡 주의: 7반과 브라우저 로컬 스토리지가 겹치지 않도록 키 이름을 변경해 주면 더 좋습니다.
-        // 하지만 기기를 반별로 완전히 분리해서 사용한다면(각자 스마트폰) 기존 키를 써도 문제없습니다.
         const savedName = localStorage.getItem('peaceFuelName_class6');
         if (savedName && STUDENT_LIST.includes(savedName)) {
             select.value = savedName;
@@ -558,7 +549,6 @@
                 streak = 1;
             }
             localStorage.setItem('peaceFuelStreak_class6', streak);
-
             localStorage.setItem('peaceFuelName_class6', selectedName);
             localStorage.setItem('peaceFuelLastDate_class6', todayStr); 
             
