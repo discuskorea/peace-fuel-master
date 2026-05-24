@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PEACE-FUEL 에너지 시티즌</title>
+    <title>PEACE-FUEL 에너지 시민</title>
     <link rel="apple-touch-icon" href="icon.jpg">
     <link rel="icon" href="icon.jpg">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-       :root {
-            --primary: #2E7D32; /* 차분하고 묵직한 초록색 */
+        :root {
+            --primary: #2E7D32;
             --secondary: #E8F5E9;
             --accent: #F9A826;
             --text-dark: #333;
             --bg-light: #f4f7f6;
         }
-        }
+        
         body {
             font-family: 'Pretendard', -apple-system, sans-serif;
             background-color: var(--bg-light);
@@ -81,18 +81,62 @@
             color: var(--primary);
             font-size: 1.15em;
         }
+        
+        /* --- 수정된 랭킹 자막(Ticker) 스타일 --- */
         .ranking-section { 
             background: #FFFDE7; 
             padding: 25px 20px; 
             border-bottom: 6px solid #FFF59D; 
         }
-        .rank-item { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 12px 0; 
-            border-bottom: 1px dashed #FBC02D; 
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 15px 0;
+            border-radius: 12px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
+            margin-top: 15px;
+        }
+        .ticker-move {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%; /* 컨테이너 오른쪽 끝에서 시작 */
+            animation: ticker 30s linear infinite; /* 30초 동안 스크롤 */
+        }
+        .ticker-wrap:hover .ticker-move, 
+        .ticker-wrap:active .ticker-move {
+            animation-play-state: paused; /* 터치/마우스 오버 시 일시정지 */
+        }
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        .ticker-item {
+            display: inline-block;
             font-size: 1.05em;
         }
+        .ticker-rank {
+            color: #E65100;
+            font-weight: bold;
+            margin-right: 6px;
+        }
+        .ticker-name {
+            color: #333;
+            font-weight: 500;
+        }
+        .ticker-points {
+            color: var(--primary);
+            font-weight: bold;
+            margin-left: 6px;
+        }
+        .ticker-divider {
+            color: #FBC02D;
+            margin: 0 18px;
+            font-size: 0.9em;
+            vertical-align: middle;
+        }
+        /* ------------------------------------- */
+
         .custom-rule-box {
             display: flex;
             gap: 10px;
@@ -214,7 +258,7 @@
 
 <div class="app-container">
     <div class="header">
-        <h1>PEACE-FUEL 에너지 시티즌</h1>
+        <h1>PEACE-FUEL 에너지 시민</h1>
         <div class="class-badge" id="classNameDisplay">🏫 6반</div>
         <br>
         <select class="name-select" id="studentSelect">
@@ -228,12 +272,12 @@
     </div>
 
     <div class="section ranking-section">
-        <h3 style="color: #F57F17;">🏆 우리 반 명예의 전당 (Top 5)</h3>
+        <h3 style="color: #F57F17; margin-bottom: 5px;">🏆 우리 반 에너지 히어로 전체 순위</h3>
+        <p style="font-size: 0.85em; color: #795548; margin: 0 0 5px 0;">모든 친구들의 참여가 자막으로 흘러갑니다. (터치하면 멈춰요!)</p>
         <div id="rankingDisplay">
             <div style="text-align:center; color:#666; font-size:0.9em; margin-top:15px;">랭킹을 불러오는 중입니다...</div>
         </div>
     </div>
-
     <div class="section">
         <h3>✅ 오늘의 에너지 절약 실천 (최대 3개)</h3>
         <p style="font-size: 0.85em; color: #E65100; margin-bottom: 15px; font-weight: bold;">※ 하루 최대 3개까지만 체크할 수 있습니다.</p>
@@ -446,28 +490,47 @@
         document.getElementById('myTotalPoints').innerText = myPoints.toLocaleString();
     }
 
+    // --- 랭킹 로직이 수정된 부분입니다 ---
     async function updateRanking() {
         if (!GAS_API_URL || GAS_API_URL.includes("여기에")) return;
         try {
             const response = await fetch(GAS_API_URL + "?class=" + encodeURIComponent(CLASS_NAME));
             const data = await response.json();
             
-            let rankingData = Array.isArray(data.top5) ? data.top5 : [];
             let classTotal = data.classTotal || 0;
             globalAllUsers = data.allUsers || []; 
 
             document.getElementById('classTotalPoints').innerText = classTotal.toLocaleString();
 
             const container = document.getElementById('rankingDisplay');
-            if(rankingData.length === 0) {
+            
+            // 점수가 0점보다 큰 참여 학생들만 모아서 내림차순 정렬
+            let activeUsers = globalAllUsers.filter(u => u.points > 0).sort((a, b) => b.points - a.points);
+
+            if(activeUsers.length === 0) {
                 container.innerHTML = "<div style='text-align:center; color:#666; font-size:0.9em; margin-top:15px;'>아직 기록이 없습니다. 우리 반 첫 번째 충전자가 되어보세요!</div>";
             } else {
-                container.innerHTML = rankingData.map((item, index) => `
-                    <div class="rank-item">
-                        <span><span style="font-weight:bold; color:#E65100; margin-right:10px;">${index + 1}위</span> ${item.name}</span>
-                        <span style="font-weight:bold; color:var(--primary);">${item.points} P</span>
-                    </div>
-                `).join('');
+                let htmlStr = '<div class="ticker-wrap"><div class="ticker-move">';
+                let currentRank = 1;
+                
+                activeUsers.forEach((item, index) => {
+                    // 점수가 같으면 공동 순위 부여 로직
+                    if (index > 0 && item.points < activeUsers[index - 1].points) {
+                        currentRank = index + 1;
+                    }
+                    
+                    htmlStr += `
+                        <span class="ticker-item">
+                            <span class="ticker-rank">${currentRank}위</span>
+                            <span class="ticker-name">${item.name}</span>
+                            <span class="ticker-points">${item.points} P</span>
+                        </span>
+                        <span class="ticker-divider">🌿</span>
+                    `;
+                });
+                
+                htmlStr += '</div></div>';
+                container.innerHTML = htmlStr;
             }
             
             updateMyScoreDisplay();
@@ -477,6 +540,7 @@
             document.getElementById('rankingDisplay').innerHTML = "<div style='text-align:center; color:#666; font-size:0.9em; margin-top:15px;'>데이터를 불러오는 중 오류가 발생했습니다.</div>";
         }
     }
+    // -------------------------------------
 
     function fireConfetti() {
         confetti({ particleCount: 100, angle: 60, spread: 70, origin: { x: 0, y: 1 }, colors: ['#1A5F7A', '#F9A826', '#E1EEDD'] });
