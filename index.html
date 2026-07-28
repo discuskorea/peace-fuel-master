@@ -276,70 +276,74 @@
             line-height: 1.45;
         }
 
-        .ranking-panel {
+        .participation-panel {
             background:
                 linear-gradient(150deg, rgba(255, 255, 255, 0.98), rgba(244, 222, 238, 0.55));
         }
 
-        .ticker-wrap {
-            width: 100%;
-            overflow: hidden;
-            padding: 14px 0;
+        .participant-count-badge {
+            flex: 0 0 auto;
+            min-width: 58px;
+            padding: 8px 11px;
             border: 1px solid rgba(116, 70, 94, 0.12);
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.78);
-            box-shadow: inset 0 1px 7px rgba(116, 70, 94, 0.06);
+            border-radius: 999px;
+            color: var(--primary-dark);
+            background: rgba(255, 255, 255, 0.82);
+            text-align: center;
+            font-size: 0.82rem;
+            font-weight: 900;
         }
 
-        .ticker-move {
-            display: inline-block;
-            min-width: 100%;
-            padding-left: 100%;
-            white-space: nowrap;
-            animation: ticker 30s linear infinite;
-        }
-
-        .ticker-wrap:hover .ticker-move,
-        .ticker-wrap:active .ticker-move {
-            animation-play-state: paused;
-        }
-
-        @keyframes ticker {
-            from {
-                transform: translateX(0);
-            }
-            to {
-                transform: translateX(-100%);
-            }
-        }
-
-        .ticker-item {
-            display: inline-flex;
+        .participants-summary {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
             align-items: center;
-            gap: 6px;
-            font-size: 0.98rem;
+            margin-bottom: 12px;
+            padding: 11px 13px;
+            border: 1px solid rgba(116, 70, 94, 0.10);
+            border-radius: 14px;
+            color: var(--text-sub);
+            background: rgba(255, 255, 255, 0.72);
+            font-size: 0.82rem;
+            line-height: 1.45;
         }
 
-        .ticker-rank {
-            color: var(--accent-strong);
-            font-weight: 900;
+        .participants-summary strong {
+            color: var(--primary-dark);
         }
 
-        .ticker-name {
-            color: var(--text-main);
-            font-weight: 750;
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+            gap: 9px;
+            width: 100%;
+            min-width: 0;
         }
 
-        .ticker-points {
-            color: var(--primary);
-            font-weight: 900;
+        .participant-chip {
+            display: flex;
+            min-width: 0;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 12px;
+            border: 1px solid rgba(116, 70, 94, 0.12);
+            border-radius: 14px;
+            color: var(--primary-dark);
+            background: rgba(255, 255, 255, 0.88);
+            box-shadow: 0 5px 13px rgba(116, 70, 94, 0.05);
+            font-size: 0.88rem;
+            font-weight: 800;
+            line-height: 1.35;
+            overflow-wrap: anywhere;
         }
 
-        .ticker-divider {
-            display: inline-block;
-            margin: 0 16px;
-            color: var(--accent-strong);
+        .participant-chip::before {
+            content: "🌱";
+            flex: 0 0 auto;
+            font-size: 0.94rem;
         }
+
 
         .empty-state {
             padding: 9px 4px;
@@ -704,8 +708,8 @@
         .app-shell,
         .content-grid,
         .panel,
-        #rankingDisplay,
-        .ticker-wrap,
+        #todayParticipantsDisplay,
+        .participants-grid,
         .custom-rule-box,
         .checklist,
         .history-list {
@@ -719,8 +723,8 @@
         }
 
         .panel,
-        #rankingDisplay,
-        .ticker-wrap {
+        #todayParticipantsDisplay,
+        .participants-grid {
             overflow-x: hidden;
         }
 
@@ -853,17 +857,20 @@
         </header>
 
         <main class="content-grid">
-            <section class="panel ranking-panel">
+            <section class="panel participation-panel">
                 <div class="panel-heading">
-                    <div class="panel-icon">🏆</div>
-                    <div>
-                        <h2>우리 반 에너지 히어로</h2>
-                        <p class="panel-description">전체 참여 순위가 흐르는 자막으로 표시됩니다. 터치하면 잠시 멈춥니다.</p>
+                    <div class="panel-icon">🌿</div>
+                    <div style="min-width: 0; flex: 1;">
+                        <h2>오늘의 에너지 시민</h2>
+                        <p class="panel-description">오늘 실천기록을 남긴 친구들을 학급 번호순으로 표시합니다.</p>
+                    </div>
+                    <div class="participant-count-badge">
+                        <span id="todayParticipantCount">0</span>명
                     </div>
                 </div>
 
-                <div id="rankingDisplay">
-                    <div class="empty-state">랭킹을 불러오는 중입니다.</div>
+                <div id="todayParticipantsDisplay">
+                    <div class="empty-state">오늘의 참여자를 불러오는 중입니다.</div>
                 </div>
             </section>
 
@@ -1057,7 +1064,6 @@
             }
         };
 
-        let globalAllUsers = [];
         let serverHistory = [];
         let isHistoryExpanded = false;
         let dashboardRequestId = 0;
@@ -1353,63 +1359,52 @@
             input.value = "";
         }
 
-        function renderRankingUsers(users) {
-            const container = getElement("rankingDisplay");
+        function renderTodayParticipants(participants, todayDate) {
+            const container = getElement("todayParticipantsDisplay");
+            const countElement = getElement("todayParticipantCount");
             container.replaceChildren();
 
-            const activeUsers = Array.isArray(users)
-                ? users
-                    .map(user => ({
-                        name: String(user?.name ?? ""),
-                        points: Number(user?.points) || 0
-                    }))
-                    .filter(user => user.name && user.points > 0)
-                    .sort((a, b) => b.points - a.points)
+            const validParticipants = Array.isArray(participants)
+                ? Array.from(
+                    new Set(
+                        participants
+                            .map(name => String(name ?? "").trim())
+                            .filter(name => name && STUDENT_LIST.includes(name))
+                    )
+                )
                 : [];
 
-            if (activeUsers.length === 0) {
-                container.appendChild(createEmptyState("아직 누적된 점수가 없습니다. 첫 번째 실천을 기록해 보세요."));
+            countElement.textContent = String(validParticipants.length);
+
+            if (validParticipants.length === 0) {
+                container.appendChild(
+                    createEmptyState("아직 오늘의 참여자가 없습니다. 오늘의 첫 실천을 기록해 보세요.")
+                );
                 return;
             }
 
-            const tickerWrap = document.createElement("div");
-            tickerWrap.className = "ticker-wrap";
+            const summary = document.createElement("div");
+            summary.className = "participants-summary";
 
-            const tickerMove = document.createElement("div");
-            tickerMove.className = "ticker-move";
+            const summaryText = document.createElement("span");
+            summaryText.textContent = "오늘 함께 실천한 에너지 시민";
 
-            let currentRank = 1;
+            const dateText = document.createElement("strong");
+            dateText.textContent = String(todayDate || "오늘");
 
-            activeUsers.forEach((item, index) => {
-                if (index > 0 && item.points < activeUsers[index - 1].points) {
-                    currentRank = index + 1;
-                }
+            summary.append(summaryText, dateText);
 
-                const tickerItem = document.createElement("span");
-                tickerItem.className = "ticker-item";
+            const grid = document.createElement("div");
+            grid.className = "participants-grid";
 
-                const rank = document.createElement("span");
-                rank.className = "ticker-rank";
-                rank.textContent = `${currentRank}위`;
-
-                const name = document.createElement("span");
-                name.className = "ticker-name";
-                name.textContent = item.name;
-
-                const points = document.createElement("span");
-                points.className = "ticker-points";
-                points.textContent = `${item.points.toLocaleString()} P`;
-
-                const divider = document.createElement("span");
-                divider.className = "ticker-divider";
-                divider.textContent = "✦";
-
-                tickerItem.append(rank, name, points);
-                tickerMove.append(tickerItem, divider);
+            validParticipants.forEach(participantName => {
+                const chip = document.createElement("div");
+                chip.className = "participant-chip";
+                chip.textContent = participantName;
+                grid.appendChild(chip);
             });
 
-            tickerWrap.appendChild(tickerMove);
-            container.appendChild(tickerWrap);
+            container.append(summary, grid);
         }
 
         function showHistoryMessage(message) {
@@ -1489,9 +1484,12 @@
         async function updateDashboard() {
             const requestId = ++dashboardRequestId;
             const selectedName = getElement("studentSelect").value.trim();
-            const rankingDisplay = getElement("rankingDisplay");
+            const todayParticipantsDisplay = getElement("todayParticipantsDisplay");
 
-            rankingDisplay.replaceChildren(createEmptyState("랭킹을 불러오는 중입니다."));
+            getElement("todayParticipantCount").textContent = "0";
+            todayParticipantsDisplay.replaceChildren(
+                createEmptyState("오늘의 참여자를 불러오는 중입니다.")
+            );
 
             if (selectedName) {
                 showHistoryMessage("지금까지의 누적 기록을 불러오는 중입니다.");
@@ -1530,8 +1528,10 @@
                 getElement("classTotalPoints").textContent =
                     (Number(data.classTotal) || 0).toLocaleString();
 
-                globalAllUsers = Array.isArray(data.allUsers) ? data.allUsers : [];
-                renderRankingUsers(globalAllUsers);
+                renderTodayParticipants(
+                    data.todayParticipants,
+                    data.todayDate
+                );
 
                 if (selectedName) {
                     getElement("myTotalPoints").textContent =
@@ -1550,8 +1550,9 @@
                     return;
                 }
 
-                rankingDisplay.replaceChildren(
-                    createEmptyState("점수와 순위를 불러오지 못했습니다. 네트워크 또는 GAS 배포 상태를 확인해 주세요.")
+                getElement("todayParticipantCount").textContent = "0";
+                todayParticipantsDisplay.replaceChildren(
+                    createEmptyState("오늘의 참여자를 불러오지 못했습니다. 네트워크 또는 GAS 배포 상태를 확인해 주세요.")
                 );
 
                 if (selectedName) {
