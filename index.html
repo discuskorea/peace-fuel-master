@@ -693,6 +693,44 @@
             background: #E7DDE3;
         }
 
+
+        /* 긴 순위 자막 때문에 카드 전체가 화면 밖으로 늘어나는 현상 방지 */
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .app-shell,
+        .content-grid,
+        .panel,
+        #rankingDisplay,
+        .ticker-wrap,
+        .custom-rule-box,
+        .checklist,
+        .history-list {
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .content-grid,
+        .panel {
+            width: 100%;
+        }
+
+        .panel,
+        #rankingDisplay,
+        .ticker-wrap {
+            overflow-x: hidden;
+        }
+
+        .custom-rule-box input,
+        textarea,
+        select {
+            min-width: 0;
+            max-width: 100%;
+        }
+
         @media (max-width: 420px) {
             .app-shell {
                 padding-inline: 10px;
