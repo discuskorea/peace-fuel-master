@@ -3,855 +3,1693 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#F4DEEE">
     <title>PEACE-FUEL 에너지 시민</title>
     <link rel="apple-touch-icon" href="icon.jpg">
     <link rel="icon" href="icon.jpg">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <style>
         :root {
-            --primary: #2E7D32;
-            --secondary: #E8F5E9;
-            --accent: #F9A826;
-            --text-dark: #333;
-            --bg-light: #f4f7f6;
+            --primary: #74465E;
+            --primary-dark: #563246;
+            --primary-soft: #F4DEEE;
+            --primary-pale: #FCF5FA;
+            --accent: #E8AFCB;
+            --accent-strong: #C878A0;
+            --success: #4F7A67;
+            --warning: #B36A2E;
+            --danger: #B54C62;
+            --text-main: #352B31;
+            --text-sub: #6F626A;
+            --line: #EBDCE5;
+            --surface: #FFFFFF;
+            --background: #FAF6F9;
+            --shadow: 0 14px 36px rgba(116, 70, 94, 0.12);
         }
-        
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            background: var(--background);
+        }
+
         body {
-            font-family: 'Pretendard', -apple-system, sans-serif;
-            background-color: var(--bg-light);
             margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-        }
-        .app-container {
-            width: 100%;
-            max-width: 480px;
-            background: white;
             min-height: 100vh;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top left, rgba(244, 222, 238, 0.95), transparent 34%),
+                linear-gradient(180deg, #FFF9FD 0%, var(--background) 100%);
+            font-family: "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont,
+                "Segoe UI", sans-serif;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button,
+        select,
+        input[type="checkbox"] {
+            cursor: pointer;
+        }
+
+        .app-shell {
+            width: min(100%, 620px);
+            min-height: 100vh;
             margin: 0 auto;
+            padding: 18px 14px 34px;
         }
-        .header {
-            background: var(--primary);
-            color: white;
-            padding: 15px 20px 25px 20px;
-            text-align: center;
-            border-bottom-left-radius: 25px;
-            border-bottom-right-radius: 25px;
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 24px 20px 22px;
+            border: 1px solid rgba(116, 70, 94, 0.12);
+            border-radius: 28px;
+            background:
+                linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(244, 222, 238, 0.96));
+            box-shadow: var(--shadow);
         }
-        .header h1 {
-            margin-top: 5px; 
-            margin-bottom: 15px;
-            font-size: 1.8em;
+
+        .hero::before,
+        .hero::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
         }
-        .class-badge {
-            background: rgba(255,255,255,0.2);
-            padding: 6px 18px;
-            border-radius: 20px;
-            font-size: 1.05em;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 15px;
+
+        .hero::before {
+            width: 170px;
+            height: 170px;
+            top: -95px;
+            right: -48px;
+            background: rgba(232, 175, 203, 0.35);
         }
-        .name-select {
-            width: 80%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border: none;
-            font-size: 1em;
-            text-align: center;
-            font-family: inherit;
+
+        .hero::after {
+            width: 110px;
+            height: 110px;
+            bottom: -66px;
+            left: -36px;
+            background: rgba(255, 255, 255, 0.55);
         }
-        .my-score-badge {
-            color: #FFD54F; 
-            font-size: 1.15em;
-            margin: 5px 0 10px 0;
-            font-weight: bold;
+
+        .hero-top,
+        .identity-row,
+        .score-grid,
+        .hero-message {
+            position: relative;
+            z-index: 1;
         }
-        .section {
-            padding: 25px 20px;
-            border-bottom: 6px solid var(--bg-light);
+
+        .hero-top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
-        h3 {
-            margin-top: 0;
+
+        .brand-mark {
+            display: grid;
+            flex: 0 0 52px;
+            width: 52px;
+            height: 52px;
+            place-items: center;
+            border-radius: 18px;
+            color: #FFFFFF;
+            background: linear-gradient(145deg, var(--primary), var(--accent-strong));
+            box-shadow: 0 10px 22px rgba(116, 70, 94, 0.24);
+            font-size: 1.45rem;
+        }
+
+        .eyebrow {
+            margin: 0 0 3px;
             color: var(--primary);
-            font-size: 1.15em;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.09em;
         }
-        
-        .ranking-section { 
-            background: #FFFDE7; 
-            padding: 25px 20px; 
-            border-bottom: 6px solid #FFF59D; 
+
+        .hero h1 {
+            margin: 0;
+            color: var(--primary-dark);
+            font-size: clamp(1.45rem, 5vw, 2rem);
+            line-height: 1.18;
+            letter-spacing: -0.04em;
         }
+
+        .identity-row {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .class-badge,
+        .name-select {
+            min-height: 46px;
+            border-radius: 14px;
+        }
+
+        .class-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 14px;
+            color: var(--primary-dark);
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(116, 70, 94, 0.15);
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .name-select {
+            width: 100%;
+            padding: 0 40px 0 14px;
+            border: 1px solid rgba(116, 70, 94, 0.2);
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.9);
+            outline: none;
+        }
+
+        .name-select:focus {
+            border-color: var(--accent-strong);
+            box-shadow: 0 0 0 4px rgba(200, 120, 160, 0.14);
+        }
+
+        .name-select:disabled {
+            color: var(--primary-dark);
+            background: rgba(255, 255, 255, 0.68);
+            opacity: 1;
+        }
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .score-card {
+            padding: 16px 14px;
+            border: 1px solid rgba(116, 70, 94, 0.13);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.76);
+        }
+
+        .score-label {
+            display: block;
+            color: var(--text-sub);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .score-value {
+            display: block;
+            margin-top: 5px;
+            color: var(--primary-dark);
+            font-size: 1.38rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+        }
+
+        .hero-message {
+            margin: 15px 2px 0;
+            color: var(--primary-dark);
+            font-size: 0.9rem;
+            font-weight: 650;
+            line-height: 1.5;
+        }
+
+        .content-grid {
+            display: grid;
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .panel {
+            padding: 20px;
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: 0 10px 24px rgba(116, 70, 94, 0.07);
+        }
+
+        .panel-heading {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .panel-icon {
+            display: grid;
+            flex: 0 0 42px;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            border-radius: 15px;
+            color: var(--primary-dark);
+            background: var(--primary-soft);
+            font-size: 1.14rem;
+        }
+
+        .panel h2,
+        .panel h3 {
+            margin: 0;
+            color: var(--primary-dark);
+            font-size: 1.08rem;
+            line-height: 1.35;
+        }
+
+        .panel-description {
+            margin: 4px 0 0;
+            color: var(--text-sub);
+            font-size: 0.84rem;
+            line-height: 1.45;
+        }
+
+        .ranking-panel {
+            background:
+                linear-gradient(150deg, rgba(255, 255, 255, 0.98), rgba(244, 222, 238, 0.55));
+        }
+
         .ticker-wrap {
             width: 100%;
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.6);
-            padding: 15px 0;
-            border-radius: 12px;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
-            margin-top: 15px;
+            padding: 14px 0;
+            border: 1px solid rgba(116, 70, 94, 0.12);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.78);
+            box-shadow: inset 0 1px 7px rgba(116, 70, 94, 0.06);
         }
+
         .ticker-move {
             display: inline-block;
+            min-width: 100%;
+            padding-left: 100%;
             white-space: nowrap;
-            padding-left: 100%; 
-            animation: ticker 30s linear infinite; 
+            animation: ticker 30s linear infinite;
         }
-        .ticker-wrap:hover .ticker-move, 
+
+        .ticker-wrap:hover .ticker-move,
         .ticker-wrap:active .ticker-move {
-            animation-play-state: paused; 
+            animation-play-state: paused;
         }
+
         @keyframes ticker {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(-100%);
+            }
         }
+
         .ticker-item {
-            display: inline-block;
-            font-size: 1.05em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.98rem;
         }
+
         .ticker-rank {
-            color: #E65100;
-            font-weight: bold;
-            margin-right: 6px;
+            color: var(--accent-strong);
+            font-weight: 900;
         }
+
         .ticker-name {
-            color: #333;
-            font-weight: 500;
+            color: var(--text-main);
+            font-weight: 750;
         }
+
         .ticker-points {
             color: var(--primary);
-            font-weight: bold;
-            margin-left: 6px;
+            font-weight: 900;
         }
+
         .ticker-divider {
-            color: #FBC02D;
-            margin: 0 18px;
-            font-size: 0.9em;
-            vertical-align: middle;
+            display: inline-block;
+            margin: 0 16px;
+            color: var(--accent-strong);
+        }
+
+        .empty-state {
+            padding: 9px 4px;
+            color: var(--text-sub);
+            text-align: center;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        .notice {
+            margin: -2px 0 14px;
+            padding: 10px 12px;
+            border-radius: 13px;
+            color: var(--warning);
+            background: #FFF7EE;
+            font-size: 0.82rem;
+            font-weight: 750;
+            line-height: 1.45;
         }
 
         .custom-rule-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            background: #f0f7fa;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px dashed #1A5F7A;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 9px;
+            margin-bottom: 14px;
+            padding: 12px;
+            border: 1px dashed var(--accent-strong);
+            border-radius: 17px;
+            background: var(--primary-pale);
         }
+
         .custom-rule-box input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 0.9em;
-        }
-        .custom-rule-box button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .checklist-item {
-            background: white;
-            border: 1px solid #eee;
-            padding: 16px;
+            min-width: 0;
+            min-height: 42px;
+            padding: 0 12px;
+            border: 1px solid var(--line);
             border-radius: 12px;
-            margin-bottom: 10px;
-            display: flex;
+            color: var(--text-main);
+            background: #FFFFFF;
+            outline: none;
+        }
+
+        .custom-rule-box input:focus {
+            border-color: var(--accent-strong);
+            box-shadow: 0 0 0 4px rgba(200, 120, 160, 0.12);
+        }
+
+        .custom-rule-box button {
+            min-height: 42px;
+            padding: 0 15px;
+            border: 0;
+            border-radius: 12px;
+            color: #FFFFFF;
+            background: var(--primary);
+            font-weight: 850;
+        }
+
+        .checklist {
+            display: grid;
+            gap: 9px;
+        }
+
+        .checklist-item {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            cursor: pointer;
+            gap: 11px;
+            min-height: 58px;
+            padding: 13px 14px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(116, 70, 94, 0.045);
+            transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
         }
+
+        .checklist-item:hover {
+            transform: translateY(-1px);
+            border-color: var(--accent);
+        }
+
         .checklist-item.custom {
-            background: #E1EEDD;
-            border-color: #A3C9A8;
+            border-color: rgba(200, 120, 160, 0.32);
+            background: var(--primary-pale);
         }
+
         .checklist-item input[type="checkbox"] {
             width: 22px;
             height: 22px;
             accent-color: var(--primary);
         }
-        .points-tag {
-            margin-left: auto;
-            background: #E3F2FD;
-            color: #1976D2;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 0.85em;
+
+        .checklist-text {
+            min-width: 0;
+            line-height: 1.42;
         }
+
+        .points-tag {
+            padding: 5px 8px;
+            border-radius: 9px;
+            color: var(--primary);
+            background: var(--primary-soft);
+            font-size: 0.8rem;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .question-card {
+            padding: 15px;
+            border: 1px solid rgba(116, 70, 94, 0.12);
+            border-radius: 17px;
+            color: var(--text-main);
+            background: var(--primary-pale);
+            font-size: 0.9rem;
+            line-height: 1.62;
+        }
+
+        .question-label {
+            display: inline-block;
+            margin-right: 5px;
+            color: var(--primary);
+            font-weight: 900;
+        }
+
+        .minimum-label {
+            display: inline-block;
+            margin-left: 4px;
+            color: var(--accent-strong);
+            font-weight: 900;
+        }
+
         textarea {
             width: 100%;
+            min-height: 170px;
+            margin-top: 12px;
             padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            resize: none;
-            box-sizing: border-box;
-            height: 120px;
-            font-family: inherit;
-            line-height: 1.5;
-            font-size: 0.95em;
+            resize: vertical;
+            border: 1px solid var(--line);
+            border-radius: 17px;
+            color: var(--text-main);
+            background: #FFFFFF;
+            outline: none;
+            line-height: 1.65;
         }
+
+        textarea:focus {
+            border-color: var(--accent-strong);
+            box-shadow: 0 0 0 4px rgba(200, 120, 160, 0.12);
+        }
+
+        textarea::placeholder {
+            color: #998A93;
+        }
+
+        .counter-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .encourage-message {
+            color: var(--primary);
+            font-size: 0.84rem;
+            font-weight: 800;
+            line-height: 1.35;
+        }
+
+        .char-counter {
+            flex: 0 0 auto;
+            color: var(--text-sub);
+            font-size: 0.84rem;
+            font-weight: 850;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 10px;
+            margin-top: 9px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #F0E8ED;
+        }
+
+        .progress-bar {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: var(--primary);
+            transition: width 0.25s ease, background 0.25s ease;
+        }
+
         .save-btn {
             width: 100%;
-            padding: 16px;
-            font-size: 1.1em;
-            margin-top: 15px;
-            background-color: var(--accent);
-            color: #333;
-            border: none;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
+            min-height: 52px;
+            margin-top: 14px;
+            padding: 0 18px;
+            border: 0;
+            border-radius: 16px;
+            color: #FFFFFF;
+            background: linear-gradient(135deg, var(--primary), var(--accent-strong));
+            box-shadow: 0 10px 22px rgba(116, 70, 94, 0.2);
+            font-size: 1rem;
+            font-weight: 900;
         }
+
         .save-btn:disabled {
-            background-color: #ccc;
             cursor: not-allowed;
+            color: #8C7E86;
+            background: #E7DDE3;
+            box-shadow: none;
         }
-        .history-section {
-            background: #FAFAFA;
+
+        .history-list {
+            display: grid;
+            gap: 10px;
         }
+
         .history-card {
-            background: white;
-            border-left: 4px solid var(--accent);
             padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--line);
+            border-left: 5px solid var(--accent-strong);
+            border-radius: 16px;
+            background: #FFFFFF;
         }
-        .history-date { font-size: 0.8em; color: #888; margin-bottom: 5px; }
-        .history-items { font-size: 0.85em; color: var(--primary); font-weight: bold; margin-bottom: 8px; }
-        .history-diary { font-size: 0.9em; color: #444; line-height: 1.4; }
-        
+
+        .history-date {
+            color: var(--text-sub);
+            font-size: 0.78rem;
+            font-weight: 750;
+        }
+
+        .history-items {
+            margin-top: 6px;
+            color: var(--primary);
+            font-size: 0.84rem;
+            font-weight: 850;
+            line-height: 1.45;
+        }
+
+        .history-diary {
+            margin-top: 8px;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
         .more-btn {
             width: 100%;
-            padding: 12px;
-            background: transparent;
-            border: 2px solid var(--primary);
+            min-height: 44px;
+            margin-top: 12px;
+            border: 1px solid var(--primary);
+            border-radius: 13px;
             color: var(--primary);
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            font-size: 0.95em;
-            transition: all 0.2s;
+            background: #FFFFFF;
+            font-weight: 850;
         }
+
         .more-btn:hover {
+            color: #FFFFFF;
             background: var(--primary);
-            color: white;
         }
-        
+
+        .app-footer {
+            padding: 18px 8px 2px;
+            color: var(--text-sub);
+            text-align: center;
+            font-size: 0.76rem;
+            line-height: 1.5;
+        }
+
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center;
+            position: fixed;
+            inset: 0;
             z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(53, 43, 49, 0.6);
+            backdrop-filter: blur(7px);
         }
+
         .modal-content {
-            background: white; width: 90%; max-width: 400px; padding: 20px;
-            border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: min(100%, 430px);
+            padding: 22px;
+            border: 1px solid rgba(116, 70, 94, 0.14);
+            border-radius: 24px;
+            background: #FFFFFF;
+            box-shadow: 0 24px 60px rgba(53, 43, 49, 0.24);
         }
+
+        .modal-content h3 {
+            margin: 0;
+            color: var(--primary-dark);
+            font-size: 1.17rem;
+        }
+
+        .modal-help {
+            margin: 7px 0 12px;
+            color: var(--danger);
+            font-size: 0.8rem;
+            font-weight: 750;
+        }
+
         .modal-text-area {
-            height: 250px; overflow-y: auto; font-size: 0.85em; color: #444; line-height: 1.5;
-            padding: 10px; background: #f9f9f9; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd;
+            height: 250px;
+            overflow-y: auto;
+            padding: 13px;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            color: var(--text-sub);
+            background: var(--primary-pale);
+            font-size: 0.84rem;
+            line-height: 1.62;
         }
+
+        .consent-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            margin: 14px 0;
+            font-size: 0.88rem;
+            font-weight: 750;
+            line-height: 1.45;
+        }
+
+        .consent-label input {
+            width: 20px;
+            height: 20px;
+            margin-top: 1px;
+            accent-color: var(--primary);
+        }
+
         .modal-btn {
-            width: 100%; background: var(--primary); color: white; border: none; padding: 12px;
-            border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1em;
+            width: 100%;
+            min-height: 48px;
+            border: 0;
+            border-radius: 14px;
+            color: #FFFFFF;
+            background: var(--primary);
+            font-weight: 900;
         }
-        .modal-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .modal-btn:disabled {
+            cursor: not-allowed;
+            color: #8C7E86;
+            background: #E7DDE3;
+        }
+
+        @media (max-width: 420px) {
+            .app-shell {
+                padding-inline: 10px;
+            }
+
+            .hero,
+            .panel {
+                border-radius: 21px;
+            }
+
+            .identity-row {
+                grid-template-columns: 1fr;
+            }
+
+            .score-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .score-card:nth-child(3) {
+                grid-column: 1 / -1;
+            }
+
+            .custom-rule-box {
+                grid-template-columns: 1fr;
+            }
+
+            .counter-row {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .char-counter {
+                align-self: flex-end;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div id="privacyModal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
-            <h3 style="margin-top: 0; color: #2E7D32; font-size: 1.2em;">🔒 개인정보 수집 및 이용 안내</h3>
-            <p style="font-size: 0.8em; color: #E65100; margin-top: -10px; margin-bottom: 10px;">
-                ※ 내용 확인 후 스크롤을 끝까지 내려야 동의가 가능합니다.
-            </p>
+            <h3>🔒 개인정보 수집 및 이용 안내</h3>
+            <p class="modal-help">※ 내용을 확인한 뒤 끝까지 내려야 동의할 수 있습니다.</p>
+
             <div class="modal-text-area" id="privacyScrollArea">
-                <strong>1. 수집 항목:</strong> 학급, 이름, 일지 내용 (최소 수집)<br><br>
-                <strong>2. 수집 목적:</strong> 2026 수업혁신사례연구대회 효과 분석 및 프로젝트 운영<br><br>
-                <strong>3. 보유 기간:</strong> 2026학년도 연구 종료 시까지 (이후 즉시 파기)<br><br>
-                <strong>4. 안전성:</strong> 구글 보안 서버 저장, 담당 교사만 접근 허용<br><br>
-                <strong>5. 권리:</strong> 언제든 담당 교사에게 정정 및 삭제 요청 가능<br><br>
-                <strong>6. 아동 보호:</strong> 사전 가정통신문(수업혁신사례 연구수업 운영 및 초상권 이용 동의) 학부모 동의 획득 완료<br><br>
+                <strong>1. 수집 항목:</strong> 학급, 이름, 실천항목, 성찰기록<br><br>
+                <strong>2. 수집 목적:</strong> PEACE-FUEL 프로젝트 운영과 수업혁신사례 연구자료 분석<br><br>
+                <strong>3. 보유 기간:</strong> 2026학년도 연구 종료 시까지 보관한 뒤 파기<br><br>
+                <strong>4. 저장 및 표시:</strong> 원자료는 담당 교사가 관리하는 Google 스프레드시트에 저장되며, 웹앱에는 학급 누적점수·일부 가림 처리된 이름과 점수·본인이 선택한 이름의 과거 실천기록이 표시됩니다.<br><br>
+                <strong>5. 권리:</strong> 언제든 담당 교사에게 기록의 확인, 정정 또는 삭제를 요청할 수 있습니다.<br><br>
+                <strong>6. 아동 보호:</strong> 사전 가정통신문을 통해 연구수업 운영 및 관련 자료 활용에 대한 학부모 동의를 받았습니다.<br><br>
                 <strong>7. 책임자:</strong> 장성근 선생님
             </div>
-            <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-size: 0.9em; font-weight: bold; cursor: pointer;">
-                <input type="checkbox" id="privacyAgreeCheck" style="width: 20px; height: 20px;" disabled>
-                위 안내 사항을 모두 확인하였으며, 동의합니다.
+
+            <label class="consent-label">
+                <input type="checkbox" id="privacyAgreeCheck" disabled>
+                <span>위 안내 사항을 모두 확인하였으며, 개인정보 수집 및 이용에 동의합니다.</span>
             </label>
-            <button id="privacyStartBtn" class="modal-btn" disabled onclick="agreeAndStart()">동의하고 계속하기</button>
+
+            <button id="privacyStartBtn" class="modal-btn" disabled onclick="agreeAndStart()">
+                동의하고 계속하기
+            </button>
         </div>
     </div>
 
-    <div class="app-container">
-        <div class="header">
-            <h1>PEACE-FUEL 에너지 시민</h1>
-            <div class="class-badge" id="classNameDisplay">🏫 6반</div>
-            <br>
-            <select class="name-select" id="studentSelect">
-                <option value="">-- 내 이름을 선택하세요 --</option>
-            </select>
-            
-            <h2 style="margin: 10px 0;">우리 반 누적 점수: <span id="classTotalPoints">0</span> P</h2>
-            <div class="my-score-badge">나의 누적 점수: <span id="myTotalPoints">0</span> P</div>
-            
-            <p style="font-size: 0.85em; margin-top: 5px; opacity: 0.9;">우리 반 모두의 실천이 모여 세상을 바꿉니다!</p>
-        </div>
-
-        <div class="section ranking-section">
-            <h3 style="color: #F57F17; margin-bottom: 5px;">🏆 우리 반 에너지 히어로 전체 순위</h3>
-            <p style="font-size: 0.85em; color: #795548; margin: 0 0 5px 0;">모든 친구들의 참여가 자막으로 흘러갑니다. (터치하면 멈춰요!)</p>
-            <div id="rankingDisplay">
-                <div style="text-align:center; color:#666; font-size:0.9em; margin-top:15px;">랭킹을 불러오는 중입니다...</div>
-            </div>
-        </div>
-
-        <div class="section">
-            <h3>✅ 오늘의 에너지 절약 실천 (최대 3개)</h3>
-            <p style="font-size: 0.85em; color: #E65100; margin-bottom: 15px; font-weight: bold;">※ 하루 최대 3개까지만 체크할 수 있습니다.</p>
-            
-            <div class="custom-rule-box">
-                <input type="text" id="customRuleInput" placeholder="[우리집의 특별한 규칙 추가] 예: 밥 먹을 때 TV 끄기">
-                <button onclick="addCustomRule()">추가</button>
+    <div class="app-shell">
+        <header class="hero">
+            <div class="hero-top">
+                <div class="brand-mark">⚡</div>
+                <div>
+                    <p class="eyebrow">PEACE-FUEL PROJECT</p>
+                    <h1>에너지 시민 실천 기록</h1>
+                </div>
             </div>
 
-            <div id="checklistContainer">
-                <label class="checklist-item">
-                    <input type="checkbox" value="10">
-                    <span>사용하지 않는 플러그 뽑기</span>
-                    <span class="points-tag">+10P</span>
-                </label>
-                <label class="checklist-item">
-                    <input type="checkbox" value="10">
-                    <span>빈 방 불 끄기</span>
-                    <span class="points-tag">+10P</span>
-                </label>
-                <label class="checklist-item">
-                    <input type="checkbox" value="10">
-                    <span>양치컵 사용하여 양치하기</span>
-                    <span class="points-tag">+10P</span>
-                </label>
-                <label class="checklist-item">
-                    <input type="checkbox" value="10">
-                    <span>샤워 시간 5분 줄이기</span>
-                    <span class="points-tag">+10P</span>
-                </label>
-                <label class="checklist-item">
-                    <input type="checkbox" value="10">
-                    <span>에어컨 적정 온도 유지하기</span>
-                    <span class="points-tag">+10P</span>
-                </label>
-                <label class="checklist-item">
-                    <input type="checkbox" value="10">
-                    <span>스마트폰 충전 끝나면 바로 선 뽑기</span>
-                    <span class="points-tag">+10P</span>
-                </label>
-                <label class="checklist-item">
-                    <input type="checkbox" value="10">
-                    <span>가족에게 에너지 절약 실천 권유하기</span>
-                    <span class="points-tag">+10P</span>
-                </label>
-            </div>
-        </div>
+            <div class="identity-row">
+                <div class="class-badge" id="classNameDisplay">🏫 6반</div>
 
-        <div class="section">
-            <h3 id="diaryTitle">⚡ 오늘의 PEACE-FUEL 충전소</h3>
-            <p style="font-size: 0.85em; color: #555; margin-bottom: 10px;" id="diaryPrompt">질문 로딩 중...</p>
-            
-            <textarea id="diaryInput" placeholder="예시 로딩 중..."></textarea>
-
-            <div id="charCounter" style="margin-top:8px; font-size:0.85em; color:#666; text-align:right;">
-                0 / 50자
-            </div>
-            <div style="width:100%; height:10px; background:#eee; border-radius:10px; overflow:hidden; margin-top:8px;">
-                <div id="diaryProgressBar" style="width:0%; height:100%; background:var(--primary); transition:0.3s;"></div>
-            </div>
-            <div id="encourageMessage" style="margin-top:10px; font-size:0.9em; color:var(--primary); font-weight:bold; text-align:center;">
-                ⚡ 오늘의 에너지 실천을 기록해보세요!
+                <select class="name-select" id="studentSelect" aria-label="학생 이름 선택">
+                    <option value="">내 이름을 선택하세요</option>
+                </select>
             </div>
 
-            <button class="save-btn" onclick="saveToday()" id="saveBtn">⚡ 오늘의 PEACE-FUEL 충전 완료하기</button>
-        </div>
+            <p class="hero-message" style="margin-top: 9px; font-size: 0.78rem;">
+                본인의 이름을 선택하면 기존 누적 점수와 과거 성찰기록을 서버에서 불러옵니다.
+            </p>
 
-        <div class="section history-section">
-            <h3>📖 나의 최근 실천 기록</h3>
-            <div id="historyContainer">
-                <p style="font-size:0.85em; color:#888; text-align:center;">아직 기록이 없습니다. 오늘 첫 충전을 완료해보세요!</p>
+            <div class="score-grid">
+                <div class="score-card">
+                    <span class="score-label">우리 반 누적 점수</span>
+                    <strong class="score-value"><span id="classTotalPoints">0</span> P</strong>
+                </div>
+
+                <div class="score-card">
+                    <span class="score-label">나의 누적 점수</span>
+                    <strong class="score-value"><span id="myTotalPoints">0</span> P</strong>
+                </div>
+
+                <div class="score-card">
+                    <span class="score-label">현재 연속 참여</span>
+                    <strong class="score-value"><span id="myStreak">0</span>일</strong>
+                </div>
             </div>
-            <button id="moreHistoryBtn" class="more-btn" style="display:none;" onclick="toggleHistory()">🔽 나의 실천 기록 더보기</button>
-        </div>
+
+            <p class="hero-message">
+                작은 실천을 기록하고 돌아보며, 생활 속 에너지 시민으로 성장해 보세요.
+            </p>
+        </header>
+
+        <main class="content-grid">
+            <section class="panel ranking-panel">
+                <div class="panel-heading">
+                    <div class="panel-icon">🏆</div>
+                    <div>
+                        <h2>우리 반 에너지 히어로</h2>
+                        <p class="panel-description">전체 참여 순위가 흐르는 자막으로 표시됩니다. 터치하면 잠시 멈춥니다.</p>
+                    </div>
+                </div>
+
+                <div id="rankingDisplay">
+                    <div class="empty-state">랭킹을 불러오는 중입니다.</div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-heading">
+                    <div class="panel-icon">✅</div>
+                    <div>
+                        <h2>오늘의 에너지 절약 실천</h2>
+                        <p class="panel-description">오늘 실천한 활동을 최대 3개 선택하세요.</p>
+                    </div>
+                </div>
+
+                <div class="notice">하루에 최소 1개, 최대 3개의 실천 항목을 선택할 수 있습니다.</div>
+
+                <div class="custom-rule-box">
+                    <input
+                        type="text"
+                        id="customRuleInput"
+                        maxlength="60"
+                        placeholder="우리 집의 특별한 규칙을 추가해 보세요."
+                        aria-label="우리 집 특별 규칙 입력"
+                    >
+                    <button type="button" onclick="addCustomRule()">추가</button>
+                </div>
+
+                <div id="checklistContainer" class="checklist">
+                    <label class="checklist-item">
+                        <input type="checkbox" value="10">
+                        <span class="checklist-text">사용하지 않는 플러그 뽑기</span>
+                        <span class="points-tag">+10P</span>
+                    </label>
+
+                    <label class="checklist-item">
+                        <input type="checkbox" value="10">
+                        <span class="checklist-text">빈 방 불 끄기</span>
+                        <span class="points-tag">+10P</span>
+                    </label>
+
+                    <label class="checklist-item">
+                        <input type="checkbox" value="10">
+                        <span class="checklist-text">양치컵 사용하여 양치하기</span>
+                        <span class="points-tag">+10P</span>
+                    </label>
+
+                    <label class="checklist-item">
+                        <input type="checkbox" value="10">
+                        <span class="checklist-text">샤워 시간 5분 줄이기</span>
+                        <span class="points-tag">+10P</span>
+                    </label>
+
+                    <label class="checklist-item">
+                        <input type="checkbox" value="10">
+                        <span class="checklist-text">에어컨 적정 온도 유지하기</span>
+                        <span class="points-tag">+10P</span>
+                    </label>
+
+                    <label class="checklist-item">
+                        <input type="checkbox" value="10">
+                        <span class="checklist-text">스마트폰 충전 끝나면 바로 선 뽑기</span>
+                        <span class="points-tag">+10P</span>
+                    </label>
+
+                    <label class="checklist-item">
+                        <input type="checkbox" value="10">
+                        <span class="checklist-text">가족에게 에너지 절약 실천 권유하기</span>
+                        <span class="points-tag">+10P</span>
+                    </label>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-heading">
+                    <div class="panel-icon">✍️</div>
+                    <div>
+                        <h2 id="diaryTitle">오늘의 PEACE-FUEL 성찰</h2>
+                        <p class="panel-description">오늘의 질문을 읽고 자신의 실제 경험과 생각을 기록하세요.</p>
+                    </div>
+                </div>
+
+                <div class="question-card" id="diaryPrompt">질문을 불러오는 중입니다.</div>
+
+                <textarea
+                    id="diaryInput"
+                    maxlength="2000"
+                    placeholder="오늘의 경험과 생각을 작성해 보세요."
+                    aria-label="성찰 기록 입력"
+                ></textarea>
+
+                <div class="counter-row">
+                    <div id="encourageMessage" class="encourage-message">
+                        💭 구체적인 경험을 떠올리며 작성해 보세요.
+                    </div>
+
+                    <div id="charCounter" class="char-counter">0 / 100자</div>
+                </div>
+
+                <div class="progress-track" aria-hidden="true">
+                    <div id="diaryProgressBar" class="progress-bar"></div>
+                </div>
+
+                <button class="save-btn" type="button" onclick="saveToday()" id="saveBtn">
+                    ⚡ 오늘의 PEACE-FUEL 충전 완료하기
+                </button>
+            </section>
+
+            <section class="panel">
+                <div class="panel-heading">
+                    <div class="panel-icon">📖</div>
+                    <div>
+                        <h2>나의 누적 실천 기록</h2>
+                        <p class="panel-description">Google 스프레드시트에 저장된 기존 기록과 새 기록을 함께 불러옵니다.</p>
+                    </div>
+                </div>
+
+                <div id="historyContainer" class="history-list">
+                    <div class="empty-state">이름을 선택하면 지금까지의 누적 기록을 불러옵니다.</div>
+                </div>
+
+                <button
+                    id="moreHistoryBtn"
+                    class="more-btn"
+                    type="button"
+                    style="display: none;"
+                    onclick="toggleHistory()"
+                >
+                    나의 실천 기록 더보기
+                </button>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            PEACE-FUEL 프로젝트 · 개인의 실천이 공동체의 변화를 만듭니다.
+        </footer>
     </div>
 
-<script>
-    // 6반 전용 GAS API 주소
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxblUMdkTo3RmRfVmB6HrmlH8LDDpEuC0Dfh_jNg2-L5B6JErLMHcG2NROy87I18q7-/exec";
-    
-    // 6반 전용 클래스명 및 스토리지 접두사
-    const CLASS_NAME = "6반"; 
-    const STORAGE_PREFIX = `peaceFuel_${CLASS_NAME}`;
+    <script>
+        const GAS_API_URL =
+            "https://script.google.com/macros/s/AKfycbwymxgQ-5Ym-CQYrXI2zT-W9qHxKUGEWQmLnaMUC-rVtKydaFpkC5oiCOPMWg8IJONe/exec";
 
-    // 6반 전용 명렬표
-    const STUDENT_LIST = [
-         "1번 김O온", "2번 김O겸", "3번 김O훈", "4번 김O휘", "5번 김O아",
-         "6번 김O규", "7번 김O조", "8번 김O아", "9번 김O온", "10번 김O상",
-         "11번 문O영", "12번 박O임", "13번 박O환", "14번 박O수", "15번 변O서",
-         "16번 신O예", "17번 양O준", "18번 엄O수", "19번 이O인", "20번 이O빈",
-         "21번 이O솔", "22번 이O안", "23번 정O호", "24번 정O우", "25번 최O진",
-         "26번 최O형", "27번 최O수", "28번 허O준", "29번 관리자", "30번 관리자",
-         "31번 관리자", "32번 관리자"
-    ];
+        const CLASS_NAME = "6반";
+        const STORAGE_PREFIX = `peaceFuel_${CLASS_NAME}`;
+        const MIN_DIARY_LENGTH = 100;
+        const MAX_DIARY_LENGTH = 2000;
+        const MAX_CUSTOM_RULE_LENGTH = 60;
 
-    let isHistoryExpanded = false;
-    let globalAllUsers = []; 
-
-const dailyPrompts = {
-    0: {
-        title: "내가 계속 참여하는 이유",
-        prompt: "PEACE-FUEL 프로젝트가 끝났는데도 에너지 실천과 기록을 계속하고 있는 이유는 무엇인가요? 처음 참여했을 때의 마음과 지금의 마음을 비교하여 작성해 보세요.",
-        placeholder: "계속 참여하게 만드는 이유와 처음보다 달라진 마음을 구체적인 경험을 들어 100자 이상 작성해 보세요."
-    },
-
-    1: {
-        title: "습관이 된 에너지 실천",
-        prompt: "처음에는 의식적으로 노력해야 했지만 지금은 자연스럽게 하게 된 에너지 실천이 있나요? 언제부터 습관이 되었다고 느꼈는지도 함께 작성해 보세요.",
-        placeholder: "습관이 된 행동, 달라진 생활 모습, 습관이 되었다고 느낀 순간을 포함하여 100자 이상 작성해 보세요."
-    },
-
-    2: {
-        title: "우리 집에 생긴 변화",
-        prompt: "나의 에너지 실천으로 가족의 행동이나 우리 집의 생활 방식이 달라진 사례가 있나요? 가족의 반응과 실제로 달라진 점을 작성해 보세요.",
-        placeholder: "가족에게 권유한 내용, 가족의 반응, 우리 집에서 달라진 행동을 구체적으로 100자 이상 작성해 보세요."
-    },
-
-    3: {
-        title: "계속하기 어려웠던 순간",
-        prompt: "에너지 실천이나 기록을 그만두고 싶거나 귀찮다고 느낀 순간이 있었나요? 그럼에도 다시 실천하게 된 이유와 방법을 작성해 보세요.",
-        placeholder: "어려웠던 상황과 그 상황을 이겨 내거나 다시 참여하게 된 과정을 100자 이상 작성해 보세요."
-    },
-
-    4: {
-        title: "수업에서 생활로 이어진 배움",
-        prompt: "PEACE-FUEL 수업에서 배운 내용 중 지금도 자신의 행동에 영향을 주고 있는 것은 무엇인가요? 그 배움이 실제 생활에서 어떻게 나타나는지 작성해 보세요.",
-        placeholder: "기억에 남은 학습 내용과 그것이 현재의 행동에 미친 영향을 사례와 함께 100자 이상 작성해 보세요."
-    },
-
-    5: {
-        title: "기록이 나에게 준 변화",
-        prompt: "웹앱에 자신의 실천을 계속 기록하는 것이 행동이나 생각을 유지하는 데 어떤 영향을 주었나요? 기록하지 않았을 때와 비교하여 작성해 보세요.",
-        placeholder: "기록하면서 느낀 점, 기록이 실천에 준 도움, 기록이 없었다면 어땠을지를 포함하여 100자 이상 작성해 보세요."
-    },
-
-    6: {
-        title: "나는 어떤 에너지 시민인가",
-        prompt: "지금의 나는 어떤 에너지 시민이라고 생각하나요? 앞으로도 계속하고 싶은 실천과 다른 사람에게 전하고 싶은 말을 함께 작성해 보세요.",
-        placeholder: "현재 자신의 모습, 계속하고 싶은 실천, 다른 사람에게 전하고 싶은 생각을 담아 100자 이상 작성해 보세요."
-    }
-};
-
-    function initApp() {
-        if (!localStorage.getItem(`${STORAGE_PREFIX}_consent`)) {
-            document.getElementById('privacyModal').style.display = 'flex';
-            const scrollArea = document.getElementById('privacyScrollArea');
-            const agreeCheck = document.getElementById('privacyAgreeCheck');
-            const startBtn = document.getElementById('privacyStartBtn');
-            
-            scrollArea.addEventListener('scroll', function() {
-                if (scrollArea.scrollTop + scrollArea.clientHeight >= scrollArea.scrollHeight - 5) {
-                    agreeCheck.disabled = false;
-                }
-            });
-            
-            if (scrollArea.scrollHeight <= scrollArea.clientHeight) {
-                agreeCheck.disabled = false;
-            }
-
-            agreeCheck.addEventListener('change', function() {
-                startBtn.disabled = !this.checked;
-            });
-        }
-        
-        document.getElementById('classNameDisplay').innerText = `🏫 ${CLASS_NAME}`;
-        
-        const select = document.getElementById('studentSelect');
-        select.disabled = true;
-
-        STUDENT_LIST.forEach(name => {
-            let option = document.createElement('option');
-            option.value = name;
-            option.innerText = name;
-            select.appendChild(option);
-        });
-
-        const savedName = localStorage.getItem(`${STORAGE_PREFIX}_name`);
-        if (savedName && STUDENT_LIST.includes(savedName)) {
-            select.value = savedName;
-        }
-
-        select.addEventListener('change', updateMyScoreDisplay);
-
-        // 방어 코드: 로컬스토리지 손상 시 빈 배열로 초기화
-        let customRules = [];
-        try { customRules = JSON.parse(localStorage.getItem(`${STORAGE_PREFIX}_customRules`)) || []; } catch(e) {}
-        if (!Array.isArray(customRules)) customRules = [];
-
-        const container = document.getElementById('checklistContainer');
-        customRules.forEach(rule => {
-            const newLabel = document.createElement('label');
-            newLabel.className = 'checklist-item custom';
-            newLabel.innerHTML = `
-                <input type="checkbox" value="${rule.value}">
-                <span>${rule.text}</span>
-                <span class="points-tag">+${rule.value}P</span>
-            `;
-            container.insertBefore(newLabel, container.firstChild);
-        });
-
-        const today = new Date().getDay();
-        const promptData = dailyPrompts[today];
-        document.getElementById('diaryTitle').innerHTML = `⚡ 오늘의 PEACE-FUEL 충전소 [${promptData.title}]`;
-        document.getElementById('diaryPrompt').innerHTML = `<strong>[오늘의 질문]</strong> ${promptData.prompt} <span style="color:#1A5F7A; font-weight:bold;">(50자 이상)</span>`;
-        document.getElementById('diaryInput').placeholder = promptData.placeholder;
-
-        document.getElementById('checklistContainer').addEventListener('change', (e) => {
-            if(e.target.type === 'checkbox') {
-                const checkedBoxes = document.querySelectorAll('#checklistContainer input[type="checkbox"]:checked');
-                if (checkedBoxes.length > 3) {
-                    alert("하루 최대 3개까지만 체크할 수 있습니다!");
-                    e.target.checked = false; 
-                }
-            }
-        });
-
-        setupDiaryFeedback();
-        renderHistory();
-        updateRanking();
-    }
-
-    function agreeAndStart() {
-        localStorage.setItem(`${STORAGE_PREFIX}_consent`, 'true');
-        document.getElementById('privacyModal').style.display = 'none';
-    }
-
-    function setupDiaryFeedback() {
-        const textarea = document.getElementById('diaryInput');
-        const counter = document.getElementById('charCounter');
-        const progressBar = document.getElementById('diaryProgressBar');
-        const message = document.getElementById('encourageMessage');
-
-        const encourageTexts = [
-            "🔥 좋은 생각이에요!", "⚡ 실천이 세상을 바꿉니다!", "🌍 오늘도 지구를 지키는 중!", 
-            "👏 아주 훌륭한 실천입니다!", "💡 에너지 시민으로 성장 중!", "🚀 우리 반 점수가 올라가고 있어요!", 
-            "🏆 작은 행동이 큰 변화를 만듭니다!"
+        const STUDENT_LIST = [
+            "1번 김O온", "2번 김O겸", "3번 김O훈", "4번 김O휘", "5번 김O아",
+            "6번 김O규", "7번 김O조", "8번 김O아", "9번 김O온", "10번 김O상",
+            "11번 문O영", "12번 박O임", "13번 박O환", "14번 박O수", "15번 변O서",
+            "16번 신O예", "17번 양O준", "18번 엄O수", "19번 이O인", "20번 이O빈",
+            "21번 이O솔", "22번 이O안", "23번 정O호", "24번 정O우", "25번 최O진",
+            "26번 최O형", "27번 최O수", "28번 허O준", "29번 관리자", "30번 관리자",
+            "31번 관리자", "32번 관리자"
         ];
 
-        textarea.addEventListener('input', () => {
-            const length = textarea.value.trim().length;
-            counter.innerText = `${length} / 50자`;
+        const dailyPrompts = {
+            0: {
+                title: "내가 계속 참여하는 이유",
+                prompt: "PEACE-FUEL 프로젝트가 끝났는데도 에너지 실천과 기록을 계속하고 있는 이유는 무엇인가요? 처음 참여했을 때의 마음과 지금의 마음을 비교하여 작성해 보세요.",
+                placeholder: `계속 참여하는 이유와 처음보다 달라진 마음을 구체적인 경험을 들어 ${MIN_DIARY_LENGTH}자 이상 작성해 보세요.`
+            },
+            1: {
+                title: "습관이 된 에너지 실천",
+                prompt: "처음에는 의식적으로 노력해야 했지만 지금은 자연스럽게 하게 된 에너지 실천이 있나요? 언제부터 습관이 되었다고 느꼈는지도 함께 작성해 보세요.",
+                placeholder: `습관이 된 행동, 달라진 생활 모습, 습관이 되었다고 느낀 순간을 포함하여 ${MIN_DIARY_LENGTH}자 이상 작성해 보세요.`
+            },
+            2: {
+                title: "우리 집에 생긴 변화",
+                prompt: "나의 에너지 실천으로 가족의 행동이나 우리 집의 생활 방식이 달라진 사례가 있나요? 가족의 반응과 실제로 달라진 점을 작성해 보세요.",
+                placeholder: `가족에게 권유한 내용, 가족의 반응, 우리 집에서 달라진 행동을 구체적으로 ${MIN_DIARY_LENGTH}자 이상 작성해 보세요.`
+            },
+            3: {
+                title: "계속하기 어려웠던 순간",
+                prompt: "에너지 실천이나 기록을 그만두고 싶거나 귀찮다고 느낀 순간이 있었나요? 그럼에도 다시 실천하게 된 이유와 방법을 작성해 보세요.",
+                placeholder: `어려웠던 상황과 그 상황을 이겨 내거나 다시 참여하게 된 과정을 ${MIN_DIARY_LENGTH}자 이상 작성해 보세요.`
+            },
+            4: {
+                title: "수업에서 생활로 이어진 배움",
+                prompt: "PEACE-FUEL 수업에서 배운 내용 중 지금도 자신의 행동에 영향을 주고 있는 것은 무엇인가요? 그 배움이 실제 생활에서 어떻게 나타나는지 작성해 보세요.",
+                placeholder: `기억에 남은 학습 내용과 그것이 현재의 행동에 미친 영향을 사례와 함께 ${MIN_DIARY_LENGTH}자 이상 작성해 보세요.`
+            },
+            5: {
+                title: "기록이 나에게 준 변화",
+                prompt: "웹앱에 자신의 실천을 계속 기록하는 것이 행동이나 생각을 유지하는 데 어떤 영향을 주었나요? 기록하지 않았을 때와 비교하여 작성해 보세요.",
+                placeholder: `기록이 실천에 준 도움과 기록이 없었다면 어땠을지를 포함하여 ${MIN_DIARY_LENGTH}자 이상 작성해 보세요.`
+            },
+            6: {
+                title: "나는 어떤 에너지 시민인가",
+                prompt: "지금의 나는 어떤 에너지 시민이라고 생각하나요? 앞으로도 계속하고 싶은 실천과 다른 사람에게 전하고 싶은 말을 함께 작성해 보세요.",
+                placeholder: `현재 자신의 모습, 계속하고 싶은 실천, 다른 사람에게 전하고 싶은 생각을 담아 ${MIN_DIARY_LENGTH}자 이상 작성해 보세요.`
+            }
+        };
 
-            const percent = Math.min((length / 50) * 100, 100);
-            progressBar.style.width = `${percent}%`;
+        let globalAllUsers = [];
+        let serverHistory = [];
+        let isHistoryExpanded = false;
+        let dashboardRequestId = 0;
+        let diaryWasComplete = false;
 
-            if(length < 20){
-                counter.style.color = "#D32F2F";
-            } else if(length < 50){
-                counter.style.color = "#F57C00";
-            } else {
-                counter.style.color = "#388E3C";
+        function getElement(id) {
+            const element = document.getElementById(id);
+            if (!element) {
+                throw new Error(`필수 화면 요소를 찾을 수 없습니다: ${id}`);
+            }
+            return element;
+        }
+
+        function safeJsonParse(value, fallback) {
+            try {
+                return JSON.parse(value);
+            } catch (error) {
+                return fallback;
+            }
+        }
+
+        function createEmptyState(message) {
+            const empty = document.createElement("div");
+            empty.className = "empty-state";
+            empty.textContent = message;
+            return empty;
+        }
+
+        function getStoredCustomRules() {
+            const parsed = safeJsonParse(
+                localStorage.getItem(`${STORAGE_PREFIX}_customRules`) || "[]",
+                []
+            );
+
+            if (!Array.isArray(parsed)) {
+                return [];
             }
 
-            if(length >= 50){
-                const randomText = encourageTexts[Math.floor(Math.random() * encourageTexts.length)];
-                message.innerText = randomText;
-                progressBar.style.background = "#388E3C"; 
-            } else {
-                message.innerText = "⚡ 조금만 더 작성하면 충전 완료할 수 있어요!";
-                progressBar.style.background = "var(--primary)";
-            }
-        });
-    }
-
-    function addCustomRule() {
-        const input = document.getElementById('customRuleInput');
-        const ruleText = input.value.trim();
-        if (!ruleText) return;
-
-        const fullRuleText = `[우리집] ${ruleText}`;
-        
-        let customRules = [];
-        try { customRules = JSON.parse(localStorage.getItem(`${STORAGE_PREFIX}_customRules`)) || []; } catch(e) {}
-        if (!Array.isArray(customRules)) customRules = [];
-
-        if (customRules.some(rule => rule.text === fullRuleText)) {
-            alert("이미 추가된 특별 규칙입니다!");
-            input.value = "";
-            return;
-        }
-
-        const container = document.getElementById('checklistContainer');
-        const newLabel = document.createElement('label');
-        newLabel.className = 'checklist-item custom';
-        newLabel.innerHTML = `
-            <input type="checkbox" value="10">
-            <span>${fullRuleText}</span>
-            <span class="points-tag">+10P</span>
-        `;
-        
-        container.insertBefore(newLabel, container.firstChild);
-        input.value = "";
-
-        customRules.push({ text: fullRuleText, value: 10 });
-        localStorage.setItem(`${STORAGE_PREFIX}_customRules`, JSON.stringify(customRules));
-    }
-
-    function updateMyScoreDisplay() {
-        const rawName = document.getElementById('studentSelect').value || localStorage.getItem(`${STORAGE_PREFIX}_name`) || "";
-        const selectedName = rawName.trim();
-        let myPoints = 0;
-        
-        if (selectedName && globalAllUsers.length > 0) {
-            const me = globalAllUsers.find(u => u.name.trim() === selectedName);
-            if (me) myPoints = me.points;
-        }
-        document.getElementById('myTotalPoints').innerText = myPoints.toLocaleString();
-    }
-
-    async function updateRanking() {
-        if (!GAS_API_URL || GAS_API_URL.includes("여기에")) {
-            document.getElementById('studentSelect').disabled = false;
-            return;
-        }
-        try {
-            const response = await fetch(GAS_API_URL + "?class=" + encodeURIComponent(CLASS_NAME));
-            const data = await response.json();
-            
-            let classTotal = data.classTotal || 0;
-            globalAllUsers = data.allUsers || []; 
-
-            document.getElementById('classTotalPoints').innerText = classTotal.toLocaleString();
-
-            const container = document.getElementById('rankingDisplay');
-            
-            let activeUsers = globalAllUsers.filter(u => u.points > 0).sort((a, b) => b.points - a.points);
-
-            if(activeUsers.length === 0) {
-                container.innerHTML = "<div style='text-align:center; color:#666; font-size:0.9em; margin-top:15px;'>아직 기록이 없습니다. 우리 반 첫 번째 충전자가 되어보세요!</div>";
-            } else {
-                let htmlStr = '<div class="ticker-wrap"><div class="ticker-move">';
-                let currentRank = 1;
-                
-                activeUsers.forEach((item, index) => {
-                    if (index > 0 && item.points < activeUsers[index - 1].points) {
-                        currentRank = index + 1;
+            return parsed
+                .map(item => {
+                    if (typeof item === "string") {
+                        return item.trim();
                     }
-                    
-                    htmlStr += `
-                        <span class="ticker-item">
-                            <span class="ticker-rank">${currentRank}위</span>
-                            <span class="ticker-name">${item.name}</span>
-                            <span class="ticker-points">${item.points} P</span>
-                        </span>
-                        <span class="ticker-divider">🌿</span>
-                    `;
-                });
-                
-                htmlStr += '</div></div>';
-                container.innerHTML = htmlStr;
-            }
-            
-            updateMyScoreDisplay();
-
-        } catch (error) {
-            console.error("데이터 로딩 실패:", error);
-            document.getElementById('rankingDisplay').innerHTML = "<div style='text-align:center; color:#666; font-size:0.9em; margin-top:15px;'>데이터를 불러오는 중 오류가 발생했습니다. (앱스 스크립트 배포 권한을 확인해주세요)</div>";
-        } finally {
-            const savedName = localStorage.getItem(`${STORAGE_PREFIX}_name`);
-            if (!savedName) {
-                document.getElementById('studentSelect').disabled = false;
-            }
-        }
-    }
-
-    function fireConfetti() {
-        try {
-            if (typeof confetti !== "undefined") {
-                confetti({ particleCount: 100, angle: 60, spread: 70, origin: { x: 0, y: 1 }, colors: ['#1A5F7A', '#F9A826', '#E1EEDD'] });
-                confetti({ particleCount: 100, angle: 120, spread: 70, origin: { x: 1, y: 1 }, colors: ['#1A5F7A', '#F9A826', '#E1EEDD'] });
-            }
-        } catch (e) {
-            console.warn("학교망 차단 등으로 폭죽 애니메이션을 불러올 수 없지만 정상 진행됩니다.");
-        }
-    }
-
-    async function saveToday() {
-        const selectedName = document.getElementById('studentSelect').value;
-        if (!selectedName) {
-            alert("⚠️ 상단의 드롭다운에서 본인의 이름을 먼저 선택해주세요!");
-            return;
-        }
-
-        const todayStr = new Date().toLocaleDateString();
-        const lastSubmitDate = localStorage.getItem(`${STORAGE_PREFIX}_lastDate`);
-        
-        if (lastSubmitDate === todayStr) {
-            alert("❌ 오늘은 이미 연료를 충전했습니다. 내일 다시 만나요!");
-            return;
-        }
-
-        const checkedBoxes = document.querySelectorAll('#checklistContainer input[type="checkbox"]:checked');
-        if (checkedBoxes.length === 0) {
-            alert("⚠️ 최소 한 가지 이상의 실천 항목을 체크해주세요!");
-            return;
-        }
-        if (checkedBoxes.length > 3) {
-            alert(`⚠️ 하루에 최대 3개까지만 체크할 수 있습니다.`);
-            return;
-        }
-
-        const diaryText = document.getElementById('diaryInput').value.trim();
-        if (diaryText.length < 50) {
-            alert(`⚠️ 충전소 일기를 50자 이상 정성스럽게 작성해주세요!\n(현재 ${diaryText.length}자)`);
-            return;
-        }
-
-        // 방어 코드: 로컬스토리지 손상 시 빈 배열로 초기화 및 let으로 변수 선언 수정
-        let history = [];
-        try { history = JSON.parse(localStorage.getItem(`${STORAGE_PREFIX}_history`)) || []; } catch(e) {}
-        if (!Array.isArray(history)) history = [];
-
-        if (history.length > 0 && history[0].diary === diaryText) {
-            alert("⚠️ 어제 작성한 일기 내용과 똑같습니다. 새로운 느낀 점을 정성껏 적어주세요!");
-            return;
-        }
-
-        const btn = document.getElementById('saveBtn');
-        btn.innerText = "⚡ 연료 충전 중...";
-        btn.disabled = true;
-
-        let earnedToday = 0;
-        checkedBoxes.forEach(cb => { earnedToday += parseInt(cb.value); });
-        
-        let actionNames = Array.from(checkedBoxes).map(cb => cb.nextElementSibling.innerText).join(', ');
-
-        try {
-            const response = await fetch(GAS_API_URL, {
-                method: "POST",
-                body: JSON.stringify({
-                    className: CLASS_NAME,
-                    name: selectedName,
-                    points: earnedToday,
-                    diary: diaryText,
-                    actions: actionNames
+                    if (item && typeof item.text === "string") {
+                        return item.text.trim();
+                    }
+                    return "";
                 })
+                .filter(Boolean)
+                .slice(-20);
+        }
+
+        function createChecklistItem(text, isCustom = false) {
+            const label = document.createElement("label");
+            const checkbox = document.createElement("input");
+            const textSpan = document.createElement("span");
+            const pointsSpan = document.createElement("span");
+
+            label.className = isCustom ? "checklist-item custom" : "checklist-item";
+            checkbox.type = "checkbox";
+            checkbox.value = "10";
+            checkbox.dataset.action = text;
+
+            textSpan.className = "checklist-text";
+            textSpan.textContent = text;
+
+            pointsSpan.className = "points-tag";
+            pointsSpan.textContent = "+10P";
+
+            label.append(checkbox, textSpan, pointsSpan);
+            return label;
+        }
+
+        function initializeChecklist() {
+            const container = getElement("checklistContainer");
+
+            container.querySelectorAll(".checklist-item").forEach(label => {
+                const checkbox = label.querySelector('input[type="checkbox"]');
+                const text = label.querySelector(".checklist-text")?.textContent?.trim() || "";
+                if (checkbox) {
+                    checkbox.dataset.action = text;
+                }
             });
 
-            const resData = await response.json();
+            getStoredCustomRules().reverse().forEach(rule => {
+                container.insertBefore(createChecklistItem(rule, true), container.firstChild);
+            });
 
-            if (resData.result === "duplicate") {
-                alert(`🚨 중복 충전 감지!\n\n${resData.message}`);
-                localStorage.setItem(`${STORAGE_PREFIX}_lastDate`, todayStr);
+            container.addEventListener("change", event => {
+                if (!(event.target instanceof HTMLInputElement) || event.target.type !== "checkbox") {
+                    return;
+                }
+
+                const checked = container.querySelectorAll('input[type="checkbox"]:checked');
+                if (checked.length > 3) {
+                    event.target.checked = false;
+                    alert("하루 최대 3개까지만 선택할 수 있습니다.");
+                }
+            });
+        }
+
+        function initPrivacyModal() {
+            if (localStorage.getItem(`${STORAGE_PREFIX}_consent`)) {
                 return;
             }
 
-            if (resData.result === "error") {
-                alert(`서버 시스템 오류가 발생했습니다: ${resData.error}`);
+            const modal = getElement("privacyModal");
+            const scrollArea = getElement("privacyScrollArea");
+            const agreeCheck = getElement("privacyAgreeCheck");
+            const startButton = getElement("privacyStartBtn");
+
+            modal.style.display = "flex";
+
+            const unlockAgreement = () => {
+                agreeCheck.disabled = false;
+            };
+
+            scrollArea.addEventListener("scroll", () => {
+                const reachedBottom =
+                    scrollArea.scrollTop + scrollArea.clientHeight >=
+                    scrollArea.scrollHeight - 6;
+
+                if (reachedBottom) {
+                    unlockAgreement();
+                }
+            });
+
+            setTimeout(() => {
+                if (scrollArea.scrollHeight <= scrollArea.clientHeight + 2) {
+                    unlockAgreement();
+                }
+            }, 0);
+
+            agreeCheck.addEventListener("change", () => {
+                startButton.disabled = !agreeCheck.checked;
+            });
+        }
+
+        function agreeAndStart() {
+            localStorage.setItem(`${STORAGE_PREFIX}_consent`, "true");
+            getElement("privacyModal").style.display = "none";
+        }
+
+        function populateStudentSelect() {
+            const select = getElement("studentSelect");
+
+            STUDENT_LIST.forEach(name => {
+                const option = document.createElement("option");
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+
+            const savedName = localStorage.getItem(`${STORAGE_PREFIX}_name`);
+            if (savedName && STUDENT_LIST.includes(savedName)) {
+                select.value = savedName;
+            } else if (savedName) {
+                localStorage.removeItem(`${STORAGE_PREFIX}_name`);
+            }
+
+            select.disabled = false;
+            select.addEventListener("change", async () => {
+                const selectedName = select.value.trim();
+
+                if (selectedName) {
+                    localStorage.setItem(`${STORAGE_PREFIX}_name`, selectedName);
+                } else {
+                    localStorage.removeItem(`${STORAGE_PREFIX}_name`);
+                }
+
+                isHistoryExpanded = false;
+                await updateDashboard();
+            });
+        }
+
+        function renderDailyPrompt() {
+            const prompt = dailyPrompts[new Date().getDay()];
+            getElement("diaryTitle").textContent = `오늘의 PEACE-FUEL 성찰 · ${prompt.title}`;
+
+            const promptBox = getElement("diaryPrompt");
+            promptBox.replaceChildren();
+
+            const label = document.createElement("span");
+            label.className = "question-label";
+            label.textContent = "[오늘의 질문]";
+
+            const text = document.createTextNode(` ${prompt.prompt} `);
+
+            const minimum = document.createElement("span");
+            minimum.className = "minimum-label";
+            minimum.textContent = `(${MIN_DIARY_LENGTH}자 이상)`;
+
+            promptBox.append(label, text, minimum);
+            getElement("diaryInput").placeholder = prompt.placeholder;
+        }
+
+        function setupDiaryFeedback() {
+            getElement("diaryInput").addEventListener("input", updateDiaryFeedback);
+            updateDiaryFeedback();
+        }
+
+        function updateDiaryFeedback() {
+            const textarea = getElement("diaryInput");
+            const counter = getElement("charCounter");
+            const progressBar = getElement("diaryProgressBar");
+            const message = getElement("encourageMessage");
+
+            const length = textarea.value.trim().length;
+            const percent = Math.min((length / MIN_DIARY_LENGTH) * 100, 100);
+
+            counter.textContent = `${length} / ${MIN_DIARY_LENGTH}자`;
+            progressBar.style.width = `${percent}%`;
+
+            if (length === 0) {
+                counter.style.color = "var(--text-sub)";
+                progressBar.style.background = "var(--accent-strong)";
+                message.textContent = "💭 구체적인 경험을 떠올리며 작성해 보세요.";
+                diaryWasComplete = false;
                 return;
             }
 
-            let streak = Number(localStorage.getItem(`${STORAGE_PREFIX}_streak`)) || 0;
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayStr = yesterday.toLocaleDateString();
+            if (length < 40) {
+                counter.style.color = "var(--danger)";
+                progressBar.style.background = "var(--danger)";
+                message.textContent = "✍️ 상황과 그때의 생각을 조금 더 적어 보세요.";
+                diaryWasComplete = false;
+                return;
+            }
 
-            if (lastSubmitDate === yesterdayStr) {
-                streak += 1;
+            if (length < MIN_DIARY_LENGTH) {
+                counter.style.color = "var(--warning)";
+                progressBar.style.background = "var(--warning)";
+                message.textContent = "🌱 자신의 변화가 드러나도록 조금만 더 작성해 보세요.";
+                diaryWasComplete = false;
+                return;
+            }
+
+            counter.style.color = "var(--success)";
+            progressBar.style.background = "var(--success)";
+
+            if (!diaryWasComplete) {
+                const messages = [
+                    "👏 경험과 생각이 구체적으로 잘 드러났어요!",
+                    "🌍 에너지 시민으로 성장하는 모습이 보여요!",
+                    "💗 꾸준한 실천과 성찰이 큰 변화를 만들어요!",
+                    "🏆 오늘의 성찰 기록을 완료할 수 있어요!"
+                ];
+                message.textContent = messages[Math.floor(Math.random() * messages.length)];
+            }
+
+            diaryWasComplete = true;
+        }
+
+        function resetDiaryFeedback() {
+            diaryWasComplete = false;
+            updateDiaryFeedback();
+        }
+
+        function addCustomRule() {
+            const input = getElement("customRuleInput");
+            const rawText = input.value.trim();
+
+            if (!rawText) {
+                alert("우리 집 특별 실천 내용을 입력해 주세요.");
+                input.focus();
+                return;
+            }
+
+            if (rawText.length > MAX_CUSTOM_RULE_LENGTH) {
+                alert(`특별 실천은 ${MAX_CUSTOM_RULE_LENGTH}자 이내로 작성해 주세요.`);
+                return;
+            }
+
+            const fullRuleText = `[우리집] ${rawText}`;
+            let customRules = getStoredCustomRules();
+
+            if (customRules.includes(fullRuleText)) {
+                alert("이미 추가한 특별 실천입니다.");
+                input.value = "";
+                return;
+            }
+
+            customRules.push(fullRuleText);
+            customRules = customRules.slice(-20);
+
+            localStorage.setItem(
+                `${STORAGE_PREFIX}_customRules`,
+                JSON.stringify(customRules)
+            );
+
+            const container = getElement("checklistContainer");
+            container.insertBefore(createChecklistItem(fullRuleText, true), container.firstChild);
+            input.value = "";
+        }
+
+        function renderRankingUsers(users) {
+            const container = getElement("rankingDisplay");
+            container.replaceChildren();
+
+            const activeUsers = Array.isArray(users)
+                ? users
+                    .map(user => ({
+                        name: String(user?.name ?? ""),
+                        points: Number(user?.points) || 0
+                    }))
+                    .filter(user => user.name && user.points > 0)
+                    .sort((a, b) => b.points - a.points)
+                : [];
+
+            if (activeUsers.length === 0) {
+                container.appendChild(createEmptyState("아직 누적된 점수가 없습니다. 첫 번째 실천을 기록해 보세요."));
+                return;
+            }
+
+            const tickerWrap = document.createElement("div");
+            tickerWrap.className = "ticker-wrap";
+
+            const tickerMove = document.createElement("div");
+            tickerMove.className = "ticker-move";
+
+            let currentRank = 1;
+
+            activeUsers.forEach((item, index) => {
+                if (index > 0 && item.points < activeUsers[index - 1].points) {
+                    currentRank = index + 1;
+                }
+
+                const tickerItem = document.createElement("span");
+                tickerItem.className = "ticker-item";
+
+                const rank = document.createElement("span");
+                rank.className = "ticker-rank";
+                rank.textContent = `${currentRank}위`;
+
+                const name = document.createElement("span");
+                name.className = "ticker-name";
+                name.textContent = item.name;
+
+                const points = document.createElement("span");
+                points.className = "ticker-points";
+                points.textContent = `${item.points.toLocaleString()} P`;
+
+                const divider = document.createElement("span");
+                divider.className = "ticker-divider";
+                divider.textContent = "✦";
+
+                tickerItem.append(rank, name, points);
+                tickerMove.append(tickerItem, divider);
+            });
+
+            tickerWrap.appendChild(tickerMove);
+            container.appendChild(tickerWrap);
+        }
+
+        function showHistoryMessage(message) {
+            const container = getElement("historyContainer");
+            container.replaceChildren(createEmptyState(message));
+            getElement("moreHistoryBtn").style.display = "none";
+        }
+
+        function renderHistory() {
+            const selectedName = getElement("studentSelect").value.trim();
+            const container = getElement("historyContainer");
+            const moreButton = getElement("moreHistoryBtn");
+
+            container.replaceChildren();
+
+            if (!selectedName) {
+                showHistoryMessage("이름을 선택하면 지금까지의 누적 기록을 서버에서 불러옵니다.");
+                return;
+            }
+
+            if (serverHistory.length === 0) {
+                showHistoryMessage("아직 저장된 실천기록이 없습니다. 오늘 첫 기록을 남겨 보세요.");
+                return;
+            }
+
+            const list = isHistoryExpanded ? serverHistory : serverHistory.slice(0, 5);
+
+            list.forEach(record => {
+                const card = document.createElement("article");
+                card.className = "history-card";
+
+                const date = document.createElement("div");
+                date.className = "history-date";
+                date.textContent = `📅 ${String(record?.date ?? "")} · +${Number(record?.points) || 0}P`;
+
+                const actions = document.createElement("div");
+                actions.className = "history-items";
+                actions.textContent = `✅ ${String(record?.actions ?? "실천항목 기록 없음")}`;
+
+                const diary = document.createElement("div");
+                diary.className = "history-diary";
+                diary.textContent = `“${String(record?.diary ?? "")}”`;
+
+                card.append(date, actions, diary);
+                container.appendChild(card);
+            });
+
+            if (serverHistory.length > 5) {
+                moreButton.style.display = "block";
+                moreButton.textContent = isHistoryExpanded
+                    ? "나의 누적 기록 접기"
+                    : `나의 누적 기록 더보기 (${serverHistory.length - 5}개)`;
             } else {
-                streak = 1;
+                moreButton.style.display = "none";
             }
-            
-            localStorage.setItem(`${STORAGE_PREFIX}_streak`, streak);
-            localStorage.setItem(`${STORAGE_PREFIX}_name`, selectedName);
-            localStorage.setItem(`${STORAGE_PREFIX}_lastDate`, todayStr); 
-            
-            document.getElementById('studentSelect').disabled = true;
-            
-            history.unshift({ date: todayStr, actions: actionNames, diary: diaryText });
-            
-            if(history.length > 30) {
-                history = history.slice(0, 30);
-            }
-            localStorage.setItem(`${STORAGE_PREFIX}_history`, JSON.stringify(history));
-            
-            document.querySelectorAll('#checklistContainer input[type="checkbox"]').forEach(cb => cb.checked = false);
-            document.getElementById('diaryInput').value = "";
-            document.getElementById('charCounter').innerText = "0 / 50자";
-            document.getElementById('diaryProgressBar').style.width = "0%";
-            document.getElementById('encourageMessage').innerText = "⚡ 오늘의 에너지 실천을 기록해보세요!";
-            
-            fireConfetti();
+        }
 
-            alert(`🎉 연료 충전 완료!\n\n오늘 우리 반에 ${earnedToday}P를 기여했습니다.\n\n🔥 현재 연속 참여 ${streak}일째!`);
-            
+        function toggleHistory() {
+            isHistoryExpanded = !isHistoryExpanded;
             renderHistory();
-            updateRanking(); 
-
-        } catch (error) {
-            alert("전송에 실패했습니다. 학교 Wi-Fi나 데이터 연결을 확인해주세요.");
-        } finally {
-            btn.innerText = "⚡ 오늘의 PEACE-FUEL 충전 완료하기";
-            btn.disabled = false;
-        }
-    }
-
-    function renderHistory() {
-        let history = [];
-        try { history = JSON.parse(localStorage.getItem(`${STORAGE_PREFIX}_history`)) || []; } catch(e) {}
-        if (!Array.isArray(history)) history = [];
-
-        const container = document.getElementById('historyContainer');
-        const moreBtn = document.getElementById('moreHistoryBtn');
-        
-        if (history.length === 0) {
-            container.innerHTML = `<p style="font-size:0.85em; color:#888; text-align:center;">아직 기록이 없습니다. 오늘 첫 충전을 완료해보세요!</p>`;
-            moreBtn.style.display = 'none';
-            return;
         }
 
-        const itemsToRender = isHistoryExpanded ? history : history.slice(0, 5);
+        async function parseJsonResponse(response) {
+            if (!response.ok) {
+                throw new Error(`HTTP 오류: ${response.status}`);
+            }
 
-        container.innerHTML = itemsToRender.map(item => `
-            <div class="history-card">
-                <div class="history-date">📅 ${item.date}</div>
-                <div class="history-items">✅ ${item.actions || '이전 테스트 기록'}</div>
-                <div class="history-diary">"${item.diary}"</div>
-            </div>
-        `).join('');
+            const text = await response.text();
 
-        if (history.length > 5) {
-            moreBtn.style.display = 'block';
-            moreBtn.innerText = isHistoryExpanded ? '🔼 나의 실천 기록 접기' : '🔽 나의 실천 기록 더보기';
-        } else {
-            moreBtn.style.display = 'none';
+            try {
+                return JSON.parse(text);
+            } catch (error) {
+                throw new Error("서버 응답을 JSON으로 해석할 수 없습니다.");
+            }
         }
-    }
 
-    function toggleHistory() {
-        isHistoryExpanded = !isHistoryExpanded;
-        renderHistory();
-    }
+        async function updateDashboard() {
+            const requestId = ++dashboardRequestId;
+            const selectedName = getElement("studentSelect").value.trim();
+            const rankingDisplay = getElement("rankingDisplay");
 
-    window.onload = initApp;
-</script>
+            rankingDisplay.replaceChildren(createEmptyState("랭킹을 불러오는 중입니다."));
+
+            if (selectedName) {
+                showHistoryMessage("지금까지의 누적 기록을 불러오는 중입니다.");
+            } else {
+                serverHistory = [];
+                getElement("myTotalPoints").textContent = "0";
+                getElement("myStreak").textContent = "0";
+                renderHistory();
+            }
+
+            const params = new URLSearchParams({
+                class: CLASS_NAME,
+                t: String(Date.now())
+            });
+
+            if (selectedName) {
+                params.set("name", selectedName);
+            }
+
+            try {
+                const response = await fetch(
+                    `${GAS_API_URL}?${params.toString()}`,
+                    { method: "GET", cache: "no-store" }
+                );
+
+                const data = await parseJsonResponse(response);
+
+                if (requestId !== dashboardRequestId) {
+                    return;
+                }
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                getElement("classTotalPoints").textContent =
+                    (Number(data.classTotal) || 0).toLocaleString();
+
+                globalAllUsers = Array.isArray(data.allUsers) ? data.allUsers : [];
+                renderRankingUsers(globalAllUsers);
+
+                if (selectedName) {
+                    getElement("myTotalPoints").textContent =
+                        (Number(data.myPoints) || 0).toLocaleString();
+
+                    getElement("myStreak").textContent =
+                        String(Number(data.myStreak) || 0);
+
+                    serverHistory = Array.isArray(data.myHistory) ? data.myHistory : [];
+                    renderHistory();
+                }
+            } catch (error) {
+                console.error("대시보드 불러오기 실패:", error);
+
+                if (requestId !== dashboardRequestId) {
+                    return;
+                }
+
+                rankingDisplay.replaceChildren(
+                    createEmptyState("점수와 순위를 불러오지 못했습니다. 네트워크 또는 GAS 배포 상태를 확인해 주세요.")
+                );
+
+                if (selectedName) {
+                    serverHistory = [];
+                    showHistoryMessage("누적 기록을 불러오지 못했습니다. 네트워크와 GAS 배포 상태를 확인해 주세요.");
+                }
+            }
+        }
+
+        function getSelectedActions() {
+            return Array.from(
+                getElement("checklistContainer").querySelectorAll('input[type="checkbox"]:checked')
+            )
+                .map(checkbox => String(checkbox.dataset.action || "").trim())
+                .filter(Boolean);
+        }
+
+        function resetEntryForm() {
+            getElement("checklistContainer")
+                .querySelectorAll('input[type="checkbox"]')
+                .forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+
+            getElement("diaryInput").value = "";
+            resetDiaryFeedback();
+        }
+
+        function fireConfetti() {
+            try {
+                if (typeof confetti !== "function") {
+                    return;
+                }
+
+                const colors = ["#74465E", "#F4DEEE", "#E8AFCB", "#FFF9FC"];
+
+                confetti({
+                    particleCount: 90,
+                    angle: 60,
+                    spread: 68,
+                    origin: { x: 0, y: 1 },
+                    colors
+                });
+
+                confetti({
+                    particleCount: 90,
+                    angle: 120,
+                    spread: 68,
+                    origin: { x: 1, y: 1 },
+                    colors
+                });
+            } catch (error) {
+                console.warn("축하 애니메이션을 실행하지 못했지만 저장에는 영향을 주지 않습니다.", error);
+            }
+        }
+
+        async function saveToday() {
+            const selectedName = getElement("studentSelect").value.trim();
+            const diaryInput = getElement("diaryInput");
+            const diary = diaryInput.value.trim();
+            const actionList = getSelectedActions();
+            const button = getElement("saveBtn");
+
+            if (!selectedName) {
+                alert("상단에서 본인의 이름을 먼저 선택해 주세요.");
+                getElement("studentSelect").focus();
+                return;
+            }
+
+            if (!STUDENT_LIST.includes(selectedName)) {
+                alert("현재 명렬표에 등록되지 않은 이름입니다.");
+                return;
+            }
+
+            if (actionList.length < 1) {
+                alert("최소 한 가지 이상의 실천항목을 선택해 주세요.");
+                return;
+            }
+
+            if (actionList.length > 3) {
+                alert("하루 최대 3개까지만 선택할 수 있습니다.");
+                return;
+            }
+
+            if (diary.length < MIN_DIARY_LENGTH) {
+                alert(`성찰기록을 ${MIN_DIARY_LENGTH}자 이상 작성해 주세요.
+현재 ${diary.length}자입니다.`);
+                diaryInput.focus();
+                return;
+            }
+
+            if (diary.length > MAX_DIARY_LENGTH) {
+                alert(`성찰기록은 ${MAX_DIARY_LENGTH}자 이하로 작성해 주세요.`);
+                diaryInput.focus();
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = "⚡ 기록을 안전하게 저장하는 중...";
+
+            try {
+                const response = await fetch(GAS_API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        className: CLASS_NAME,
+                        name: selectedName,
+                        actionList,
+                        diary
+                    })
+                });
+
+                const result = await parseJsonResponse(response);
+
+                if (result.result === "duplicate") {
+                    alert(result.message || "오늘은 이미 기록을 완료했습니다.");
+                    await updateDashboard();
+                    return;
+                }
+
+                if (result.result === "error") {
+                    alert(`저장하지 못했습니다.
+${result.error || "서버 오류가 발생했습니다."}`);
+                    return;
+                }
+
+                if (result.result !== "success") {
+                    throw new Error("서버가 정상적인 저장 완료 응답을 보내지 않았습니다.");
+                }
+
+                resetEntryForm();
+                fireConfetti();
+                await updateDashboard();
+
+                alert(
+                    `🎉 오늘의 기록을 저장했습니다!
+
+` +
+                    `오늘 획득점수: ${Number(result.points) || actionList.length * 10}P
+` +
+                    `현재 연속 참여: ${Number(result.streak) || 1}일`
+                );
+            } catch (error) {
+                console.error("저장 실패:", error);
+                alert("기록 전송에 실패했습니다. 네트워크 연결과 GAS 배포 상태를 확인해 주세요.");
+            } finally {
+                button.disabled = false;
+                button.textContent = "⚡ 오늘의 PEACE-FUEL 충전 완료하기";
+            }
+        }
+
+        async function initApp() {
+            getElement("classNameDisplay").textContent = `🏫 ${CLASS_NAME}`;
+
+            initPrivacyModal();
+            populateStudentSelect();
+            initializeChecklist();
+            renderDailyPrompt();
+            setupDiaryFeedback();
+
+            getElement("customRuleInput").addEventListener("keydown", event => {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    addCustomRule();
+                }
+            });
+
+            await updateDashboard();
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            initApp().catch(error => {
+                console.error("앱 초기화 실패:", error);
+                alert("웹앱을 시작하는 중 오류가 발생했습니다. 페이지를 새로고침해 주세요.");
+            });
+        });
+
+    </script>
 </body>
 </html>
